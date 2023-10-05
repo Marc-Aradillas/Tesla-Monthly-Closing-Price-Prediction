@@ -1,21 +1,32 @@
+# Data Manipulation Imports
 import pandas as pd
 import numpy as np
+
+# Data Visualization Imports
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from evaluate import plot_residuals, regression_errors, baseline_mean_errors, better_than_baseline
-from sklearn.linear_model import LinearRegression
+# Evaluation Imports
+from evaluate import (
+    plot_residuals,
+    regression_errors,
+    baseline_mean_errors,
+    better_than_baseline,
+)
+
+# Modeling Imports
+from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor, plot_importance
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, PolynomialFeatures
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
-from sklearn.linear_model import Ridge
+
+# Other Imports
 from math import sqrt
 
-#custom imports
+# Custom Module Imports
 import wrangle as w
 
 
@@ -214,6 +225,7 @@ def train_random_forest_model(X_train, y_train, X_val, y_val):
     print(f"\n-------------------------------------")
     print(f"\nValidation R-squared (R2): {val_r2:.2f}")
 
+
 def train_linear_regression(train_df, val_df, target_column):
     """
     Train and evaluate a linear regression baseline model.
@@ -241,6 +253,7 @@ def train_linear_regression(train_df, val_df, target_column):
     print("\nValidation Set Metrics:")
     evaluate_model(val_preds['y_actual'], val_preds['y_hat'])
 
+# Function to train a xgboost regression model
 def model_3(X_train, y_train, X_val, y_val, early_stopping_rounds=10, params=None):
     # Define the hyperparameters for your XGBoost model (or pass them as an argument)
     if params is None:
@@ -301,12 +314,6 @@ def evaluate_model(y_actual, y_pred):
     r2 = r2_score(y_actual, y_pred)
     print(f"RMSE: {rmse:.2f}")
     print(f"R-squared: {r2:.2f}")
-
-# Your other module functions and imports here
-
-# Define your model_3 function (as mentioned in the previous response)
-
-# Your other module functions and code here
 
 def main(tsla_train, tsla_val, tsla_test):
     # Load and preprocess your data (tsla_train, tsla_val, vvos_train, vvos_test)

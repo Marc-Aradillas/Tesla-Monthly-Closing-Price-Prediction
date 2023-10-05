@@ -49,13 +49,18 @@ def prep(df, symbol, csv_file_name=None):
 
 # -----------------Train-Validate-Test-------------------------------
 
-seed = 42
+def train_val_test(df, seed=42):
+    """
+    Split the data into training, validation, and test sets.
 
-# function to subset data
-def train_val_test(df, seed = 42):
+    Parameters:
+    - df (DataFrame): The input DataFrame to be split.
+    - seed (int): Random seed for reproducibility.
 
+    Returns:
+    - train, val, test (DataFrames): Split datasets for training, validation, and testing.
+    """
     train, val_test = train_test_split(df, train_size=0.7, random_state=seed)
     val, test = train_test_split(val_test, train_size=0.5, random_state=seed)
 
     return train, val, test
-

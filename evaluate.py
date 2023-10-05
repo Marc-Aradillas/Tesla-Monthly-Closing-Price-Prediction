@@ -97,39 +97,3 @@ def better_than_baseline(y, yhat):
     _, _, RMSE_baseline = baseline_mean_errors(y)
     
     return RMSE < RMSE_baseline
-
-
-
-
-# _________________________________________________________________________
-
-# evaluate.plot_residuals(preds.y_actual, preds.y_hat)
-
-# print(f"\n-------------------------------------")
-
-
-# SSE, ESS, TSS, MSE, RMSE = evaluate.regression_errors(preds.y_actual, preds.y_hat)
-
-# print(f"\nSSE: {SSE}\n")
-
-# print(f"ESS: {ESS}\n")
-
-# print(f"TSS: {TSS}\n")
-
-# print(f"MSE: {MSE}\n")
-
-# print(f"RMSE: {RMSE}\n")
-
-# print(f"\n-------------------------------------")
-
-# SSE_baseline, MSE_baseline, RMSE_baseline = evaluate.baseline_mean_errors(preds.y_actual)
-
-# print(f"Baseline SSE: {SSE_baseline}\n")
-
-# print(f"Baseline MSE: {MSE_baseline}\n")
-
-# print(f"Baseline RMSE: {RMSE_baseline}\n")
-
-# print(f"\n-------------------------------------")
-
-# print(f"\nIs the model better than the baseline? {evaluate.better_than_baseline(preds.y_actual, preds.y_hat)}")
