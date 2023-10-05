@@ -17,7 +17,7 @@
  
 
 <div style="text-align:center">
-  ![art-rachen-sM4r-swmcoY-unsplash](https://raw.githubusercontent.com/Marc-Aradillas/volatile_company_stock_project/main/assets/106922826/c9cebfec-8a74-48a5-9509-5a552b83983b)
+	![art-rachen-sM4r-swmcoY-unsplash](https://raw.githubusercontent.com/Marc-Aradillas/volatile_company_stock_project/main/assets/106922826/c9cebfec-8a74-48a5-9509-5a552b83983b)
 </div>
 
 
