@@ -153,25 +153,9 @@ def lin_reg_baseline_model(df, target_column):
     print("-------------------------------------")
 
 # ============================ model function =============================
-def xy_splt():
-# Wrangle the data
-    nvda_df, aapl_df, amd_df, tsla_df, vvos_df = w.wrangle_stock_data()
-    
-    # Drop categorical features
-    vvos_df = vvos_df.drop(columns=['day_of_week', 'month'])
-
-    # Train-test split
-    train, val, test = train_val_test(vvos_df)
-
-    # Split data into X and y for train and val
-    X_train, y_train = xy_split(train, 'home_value')
-    X_val, y_val = xy_split(val, 'home_value')
-    X_test, y_test = xy_split(test, 'home_value')
-
-    return X_train, y_train, X_val, y_val, X_test, y_test
 
 
-def model_1(X_train, y_train, X_val, y_val):
+def final_model_tsla(X_train, y_train, X_test, y_test):
     # Initialize the RandomForestRegressor
     rfr = RandomForestRegressor()
     
@@ -180,17 +164,47 @@ def model_1(X_train, y_train, X_val, y_val):
     
     # Make predictions on training and validation sets
     train_preds = rfr.predict(X_train)
-    val_preds = rfr.predict(X_val)
+    test_preds = rfr.predict(X_test)
     
     # Calculate RMSE for training and validation sets
     train_rmse = np.sqrt(mean_squared_error(y_train, train_preds))
-    val_rmse = np.sqrt(mean_squared_error(y_val, val_preds))
+    test_rmse = np.sqrt(mean_squared_error(y_test, test_preds))
     
     # Calculate R-squared (R2) for training and validation sets
     train_r2 = r2_score(y_train, train_preds)
-    val_r2 = r2_score(y_val, val_preds)
+    test_r2 = r2_score(y_test, test_preds)
     
     # Print the metrics
+    print(f"\n-------------------------------------")
+    print(f"\nTraining RMSE: {train_rmse:.2f}")
+    print(f"\n-------------------------------------")
+    print(f"\nTest RMSE: {test_rmse:.2f}")
+    print(f"\n-------------------------------------")
+    print(f"\nTraining R-squared (R2): {train_r2:.2f}")
+    print(f"\n-------------------------------------")
+    print(f"\nTest R-squared (R2): {test_r2:.2f}")
+
+
+def preprocess_data(df):
+    """
+    Preprocess the data by dropping unnecessary columns and splitting into features and target.
+    """
+    df = df.drop(columns=['month', 'day_of_week'])
+    X, y = xy_split(df, 'next_month_close')
+    return X, y
+
+def train_random_forest_model(X_train, y_train, X_val, y_val):
+    """
+    Train a Random Forest Regressor model and evaluate it.
+    """
+    rfr = RandomForestRegressor()
+    rfr.fit(X_train, y_train)
+    train_preds = rfr.predict(X_train)
+    val_preds = rfr.predict(X_val)
+    train_rmse = np.sqrt(mean_squared_error(y_train, train_preds))
+    val_rmse = np.sqrt(mean_squared_error(y_val, val_preds))
+    train_r2 = r2_score(y_train, train_preds)
+    val_r2 = r2_score(y_val, val_preds)
     print(f"\n-------------------------------------")
     print(f"\nTraining RMSE: {train_rmse:.2f}")
     print(f"\n-------------------------------------")
@@ -199,30 +213,35 @@ def model_1(X_train, y_train, X_val, y_val):
     print(f"\nTraining R-squared (R2): {train_r2:.2f}")
     print(f"\n-------------------------------------")
     print(f"\nValidation R-squared (R2): {val_r2:.2f}")
-    
-    return rfr
 
-# Example usage:
-# rfr = RandomForestRegressor()
-# trained_model = train_and_evaluate_model(rfr, X_train, y_train, X_val, y_val)
+def train_linear_regression(train_df, val_df, target_column):
+    """
+    Train and evaluate a linear regression baseline model.
+    """
+    numeric_cols = train_df.select_dtypes(include=[np.number]).columns
+    train_df = train_df[numeric_cols]
+    val_df = val_df[numeric_cols]
+    X_train = train_df.drop(columns=[target_column])
+    y_train = train_df[target_column]
+    X_val = val_df.drop(columns=[target_column])
+    y_val = val_df[target_column]
+    bl = y_train.median()
+    train_preds = pd.DataFrame({'y_actual': y_train, 'y_baseline': bl})
+    val_preds = pd.DataFrame({'y_actual': y_val, 'y_baseline': bl})
+    train_preds['y_baseline_residuals'] = bl - train_preds['y_actual']
+    val_preds['y_baseline_residuals'] = bl - val_preds['y_actual']
+    lm = LinearRegression()
+    lm.fit(X_train, y_train)
+    train_preds['y_hat'] = lm.predict(X_train)
+    val_preds['y_hat'] = lm.predict(X_val)
+    train_preds['y_hat_residuals'] = train_preds['y_hat'] - train_preds['y_actual']
+    val_preds['y_hat_residuals'] = val_preds['y_hat'] - val_preds['y_actual']
+    print("\nTraining Set Metrics:")
+    evaluate_model(train_preds['y_actual'], train_preds['y_hat'])
+    print("\nValidation Set Metrics:")
+    evaluate_model(val_preds['y_actual'], val_preds['y_hat'])
 
-# ======================================= model 2 ============================================\
-
-
-def model_2(df, target_column, X_val, y_val, early_stopping_rounds=10, params=None):
-
-    # acquire data
-    df = wrangle_zillow()
-
-    # Drop categorical features
-    df = df.drop(columns=['property_county_landuse_code', 'property_zoning_desc', 'n-prop_type', 'n-av_room_size', 'state'])
-    
-    # Train-test split
-    train, val, test = train_val_test(df)
-
-    # Split data into X and y
-    X_train, y_train = xy_split(df, target_column)
-    
+def model_3(X_train, y_train, X_val, y_val, early_stopping_rounds=10, params=None):
     # Define the hyperparameters for your XGBoost model (or pass them as an argument)
     if params is None:
         params = {
@@ -252,133 +271,73 @@ def model_2(df, target_column, X_val, y_val, early_stopping_rounds=10, params=No
     # Calculate RMSE and R2 for the validation set
     val_rmse = np.sqrt(mean_squared_error(y_val, val_preds))
     val_r2 = r2_score(y_val, val_preds)
-    
-    # Create a dictionary to store the results
-    results = {
-        'model': xgb,
-        'val_rmse': val_rmse,
-        'val_r2': val_r2,
-        'best_iteration': best_iteration,
-        'best_score': best_score
-    }
+
+    # Make predictions on training set
+    train_preds = xgb.predict(X_train)
+
+    # Calculate RMSE and R2 for the training set
+    train_rmse = np.sqrt(mean_squared_error(y_train, train_preds))
+    train_r2 = r2_score(y_train, train_preds)
     
     # Print the metrics within the function
     print(f"\n\n\n-------------------------------------")
+    print(f"\nTraining RMSE: {train_rmse:.2f}")
+    print(f"\n-------------------------------------")
+    print(f"\nTraining R-squared (R2): {train_r2:.2f}")
+    print(f"\n-------------------------------------")
     print(f"\nValidation RMSE: {val_rmse:.2f}")
     print(f"\n-------------------------------------")
     print(f"\nValidation R-squared (R2): {val_r2:.2f}")
     print(f"\n-------------------------------------")
-    print(f"\nBest Iteration: {best_iteration}")
-    print(f"\n-------------------------------------")
     print(f"\nBest Score: {best_score}")
-    
-    return results
 
 
-# ========================================= model 3 ================================================
+def evaluate_model(y_actual, y_pred):
+    """
+    Evaluate a regression model and print RMSE and R-squared.
+    """
+    mse = mean_squared_error(y_actual, y_pred)
+    rmse = np.sqrt(mse)
+    r2 = r2_score(y_actual, y_pred)
+    print(f"RMSE: {rmse:.2f}")
+    print(f"R-squared: {r2:.2f}")
 
-def model_3(X_train, y_train, X_val, y_val):
+# Your other module functions and imports here
 
-        # Calculate mean and median of y_train
-        y_train_mean = y_train.mean()
-        y_train_median = y_train.median()
-        
-        # Create a DataFrame with y_train statistics
-        bl = pd.DataFrame({"y_actual" : y_train,
-                           "y_mean" : y_train_mean,
-                           "y_median" : y_train_median})
-        
-        # Apply polynomial feature transformation
-        poly = PolynomialFeatures()
-        X_train = poly.fit_transform(X_train)
-        X_val = poly.transform(X_val)
-    
-        # Train a Linear Regression model and evaluate it
-        lm = LinearRegression()
-        trained_model, train_rmse, val_rmse = train_and_evaluate_model(lm, X_train, y_train, X_val, y_val)
-    
-        # Print the metrics
-        print(f"\n-------------------------------------")
-        print(f"\nTraining RMSE: {train_rmse:.2f}")
-        print(f"\n-------------------------------------")
-        print(f"\nValidation RMSE: {val_rmse:.2f}")
-        print(f"\n-------------------------------------")
-        print(f"\nTraining R-squared (R2): {train_r2:.2f}")
-        print(f"\n-------------------------------------")
-        print(f"\nValidation R-squared (R2): {val_r2:.2f}")
+# Define your model_3 function (as mentioned in the previous response)
 
-# ======================== final model and visualization ===============================
-def final_model(df, target_column, X_test, y_test, early_stopping_rounds=10, params=None):
-    
-    # acquire data
-    df = wrangle_zillow()
+# Your other module functions and code here
 
-    # Drop categorical features
-    df = df.drop(columns=['property_county_landuse_code', 'property_zoning_desc', 'n-prop_type', 'n-av_room_size', 'state'])
-    
-    # Train-test split
-    train, val, test = train_val_test(df)
+def main(tsla_train, tsla_val, tsla_test):
+    # Load and preprocess your data (tsla_train, tsla_val, vvos_train, vvos_test)
+    X_train, y_train = preprocess_data(tsla_train)
+    X_val, y_val = preprocess_data(tsla_val)
 
-    # Split data into X and y
-    X_train, y_train = xy_split(df, target_column)
-    X_test, y_test = xy_split(df, target_column)
-    
-    # Define the hyperparameters for your XGBoost model (or pass them as an argument)
-    if params is None:
-        params = {
-            'learning_rate': 0.1,
-            'n_estimators': 300,
-            'max_depth': 4,
-            'early_stopping_rounds': early_stopping_rounds,
-            # Add other hyperparameters as needed
-        }
+    print('\nModel 1: Random Forest Regressor')
+    train_random_forest_model(X_train, y_train, X_val, y_val)
 
+    print('\n\n\n\nModel 2: Linear Regression Baseline')
+    train_linear_regression(tsla_train, tsla_val, 'next_month_close')
 
-    # Define weight data (you can replace this with your actual weights)
-    sample_weights = np.ones(X_train.shape[0])  # Example: All weights are set to 1
-    
-    # Create the XGBoost regressor with your specified hyperparameters
-    xgb = XGBRegressor(**params)
-    
-    # Fit the model to your training data with eval_set and verbose
-    xgb.fit(X_train, y_train, eval_set=[(X_test, y_test)], verbose=False, sample_weight=sample_weights)
+    print('\n\n\n\nModel 3: XGBoost Regressor')
+    # Assuming you have already loaded and preprocessed your data
+    X_val, y_val = preprocess_data(tsla_val)  # You should have a function like this
+    model_3_results = model_3(X_train, y_train, X_val, y_val)
 
-    # Access the best iteration and best score
-    best_iteration = xgb.best_iteration
-    best_score = xgb.best_score
-    
-    # Make predictions on validation set
-    test_preds = xgb.predict(X_test)
+    print('\n\n\n\nBest Model: Random Forest Regressor Model')
+    X_train, y_train = preprocess_data(tsla_train)
+    X_test, y_test = preprocess_data(tsla_test)
+    final_model_tsla(X_train, y_train, X_test, y_test)
 
-    # Create a scatter plot of actual vs. predicted values
-    plt.figure(figsize=(10, 6))
-    sns.scatterplot(x=y_test, y=test_preds, alpha=0.5, color='orange')
-    plt.title("Actual vs. Predicted Values")
-    plt.xlabel("Actual Values")
-    plt.ylabel("Predicted Values")
-    plt.show()
-    
-    # Calculate RMSE and R2 for the validation set
-    test_rmse = np.sqrt(mean_squared_error(y_test, test_preds))
-    test_r2 = r2_score(y_test, test_preds)
-    
-    # Create a dictionary to store the results
-    results = {
-        'model': xgb,
-        'val_rmse': test_rmse,
-        'val_r2': test_r2,
-        'best_iteration': best_iteration,
-        'best_score': best_score
-    }
-    
-    # Print the metrics within the function
-    print(f"\n\n\n-------------------------------------")
-    print(f"\nTest RMSE: {test_rmse:.2f}")
-    print(f"\n-------------------------------------")
-    print(f"\nTest R-squared (R2): {test_r2:.2f}")
-    print(f"\n-------------------------------------")
-    print(f"\nBest Iteration: {best_iteration}")
-    print(f"\n-------------------------------------")
-    print(f"\nBest Score: {best_score}")
-    
-    return results
+    # Repeat for vvos dataset if needed
+    # X_train, y_train = preprocess_data(vvos_train)
+    # X_val, y_val = preprocess_data(vvos_val)
+    # train_random_forest_model(X_train, y_train, X_val, y_val)
+    # train_linear_regression_baseline(vvos_train, vvos_val, 'next_month_close')
+    # X_train, y_train = preprocess_data(vvos_train)
+    # X_test, y_test = preprocess_data(vvos_test)
+    # final_model_vvos(X_train, y_train, X_test, y_test)
+
+if __name__ == "__main__":
+    main(tsla_train, tsla_val, tsla_test)
+
