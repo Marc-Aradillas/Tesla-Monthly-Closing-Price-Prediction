@@ -18,32 +18,37 @@ import config
 
 api_key = config.ALPHA_VANTAGE_API_KEY
 
+
 def get_stock_data(symbol, api_key):
     '''
     Acquisiiton function used to search for a csv if not present in os,
-    then it will get the data for the previous 2 years and store it as a CSV.
+    then it will get the data for the previous 3 years and store it as a CSV.
     '''
     # Define the CSV file path for the stock symbol
     csv_file_path = f'{symbol}_data.csv'
     
-    # Calculate the date 3.5 years ago from today
+    # Calculate the date 3 years ago from today
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=2*365)
+    start_date = end_date - timedelta(days=3*365)
     
-    # Check if the CSV file exists and if it contains data within the desired time frame
+    # Check if the CSV file exists
     if os.path.isfile(csv_file_path):
         df = pd.read_csv(csv_file_path, index_col=0, parse_dates=True)
         
-        # Check if the data covers the desired time frame
-        if df.index[-1] >= start_date:
+        # Check if the data contains any records within the desired time frame
+        if not df.empty and df.index[-1] >= start_date:
             # Filter the DataFrame to include only data within the desired time frame
-            df = df[start_date:]
+            df = df[(df.index >= start_date) & (df.index <= end_date)]
             return df
     
     # Fetch monthly data from the API for the desired time frame
     url = f'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol={symbol}&apikey={api_key}'
     r = requests.get(url)
     data = r.json()
+    
+    # Check if the API response contains an error message
+    if 'Error Message' in data:
+        raise ValueError(f"API Error: {data['Error Message']}")
     
     monthly_data = data['Monthly Time Series']
     
@@ -52,12 +57,13 @@ def get_stock_data(symbol, api_key):
     df.index = pd.to_datetime(df.index) # set the index for timestamps to datetime values; originally object.
     
     # Filter the DataFrame to include only data within the desired time frame
-    df = df[start_date:]
+    df = df[(df.index >= start_date) & (df.index <= end_date)]
     
     # Save the DataFrame as a CSV file for future use
     df.to_csv(csv_file_path)
     
     return df
+
 
 
 def prep(df, symbol, csv_file_name=None):
@@ -97,12 +103,14 @@ def wrangle_stock_data():
     aapl_data = get_stock_data('AAPL', api_key)
     amd_data = get_stock_data('AMD', api_key)
     tsla_data = get_stock_data('TSLA', api_key)
+    vvos_data = get_stock_data('VVOS', api_key)
     
     # Clean and prepare the data
     nvda_df = prep(nvda_data, 'NVDA', 'cleaned_data')
     aapl_df = prep(aapl_data, 'AAPL', 'cleaned_data')
     amd_df = prep(amd_data, 'AMD', 'cleaned_data')
     tsla_df = prep(tsla_data, 'TSLA', 'cleaned_data')
+    vvos_df = prep(vvos_data, 'VVOS' 'cleaned_data')
 
     
     # Add 'next_day_close' column to each dataframe #
@@ -111,6 +119,7 @@ def wrangle_stock_data():
     aapl_df['next_month_close'] = aapl_df['aapl_close'].shift(-1)
     amd_df['next_month_close'] = amd_df['amd_close'].shift(-1)
     tsla_df['next_month_close'] = tsla_df['tsla_close'].shift(-1)
+    vvos_df['next_month_close'] = vvos_df['vvos_close'].shift(-1)
 
     
     
@@ -119,9 +128,10 @@ def wrangle_stock_data():
     aapl_df = aapl_df[:-1]
     amd_df = amd_df[:-1]
     tsla_df = tsla_df[:-1]
+    vvos_df = vvos_df[:-1]
     
     # Return the cleaned dataframes (and optionally train, validate, and test sets)
-    return nvda_df, aapl_df, amd_df, tsla_df
+    return nvda_df, aapl_df, amd_df, tsla_df, vvos_df
 
 # Example usage:
 # nvda_df, aapl_df, amd_df = wrangle_stock_data()

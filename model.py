@@ -101,7 +101,7 @@ def train_and_evaluate_model(model, X_train, y_train, X_val, y_val):
 
 # --------------------------------- stock plot and model train -----------------------\
 
-def baseline_model(df, target_column):
+def lin_reg_baseline_model(df, target_column):
 
     # Filter out non-numeric columns (categorical features)
     numeric_cols = df.select_dtypes(include=[np.number]).columns
@@ -147,19 +147,21 @@ def baseline_model(df, target_column):
     # Calculate baseline errors
     mse_baseline = mean_squared_error(y_train, preds['y_baseline'])
     rmse_baseline = np.sqrt(mse_baseline)
+    r2 = r2_score(y_train, preds['y_baseline'])
     print(f"Baseline RMSE: {rmse_baseline:.2f}")
+    print(f"baseline R-squared: {r2:.2f}\n")
     print("-------------------------------------")
 
 # ============================ model function =============================
-def model_xy():
+def xy_splt():
 # Wrangle the data
-    df = wrangle_zillow()
-
+    nvda_df, aapl_df, amd_df, tsla_df, vvos_df = w.wrangle_stock_data()
+    
     # Drop categorical features
-    df = df.drop(columns=['property_county_landuse_code', 'property_zoning_desc', 'n-prop_type', 'n-av_room_size', 'state'])
+    vvos_df = vvos_df.drop(columns=['day_of_week', 'month'])
 
     # Train-test split
-    train, val, test = train_val_test(df)
+    train, val, test = train_val_test(vvos_df)
 
     # Split data into X and y for train and val
     X_train, y_train = xy_split(train, 'home_value')
@@ -275,75 +277,8 @@ def model_2(df, target_column, X_val, y_val, early_stopping_rounds=10, params=No
 
 # ========================================= model 3 ================================================
 
-def model_3():
+def model_3(X_train, y_train, X_val, y_val):
 
-        # acquire data
-        df = wrangle_zillow()
-    
-        # Drop categorical features
-        df = df.drop(columns=['parcel_id',
-                              'property_county_landuse_code', 
-                              'property_zoning_desc', 
-                              'n-prop_type', 
-                              'n-av_room_size', 
-                              'state',
-                              'region_id_county',
-                              'region_id_zip',
-                              'latitude',
-                              'longitude',
-                              'lot_area',
-                              'bedrooms',
-                              'basement_sqft',
-                              'fips',
-                              'rooms',
-                              'num_stories',
-                              'year_built',
-                              'property_landuse_type_id',
-                              'ac_type_id',
-                              'building_quality_type_id',
-                              'heating_or_system_type_id',
-                              'deck_type_id',
-                              'unit_cnt',
-                              'garage_car_cnt',
-                              'garage_total_sqft',
-                              'pool_cnt',
-                              'pool_size_sum',
-                              'pool_type_id_2',
-                              'pool_type_id_7',
-                              'fire_place_cnt',
-                              'fire_place_flag',
-                              'has_hot_tub_or_spa',
-                              'patio_sqft',
-                              'storage_sqft',
-                              'tax_delinquency_flag',
-                              'raw_census_tract_and_block',
-                              'n-life',
-                              'n-living_area_error',
-                              'n-living_area_prop',
-                              'n-living_area_prop2',
-                              'n-extra_space',
-                              'n-extra_space-2',
-                              'n-gar_pool_ac',
-                              'n-location',
-                              'n-location-2',
-                              'n-location-2round',
-                              'n-latitude-round',
-                              'n-longitude-round',
-                              'n-zip_count',
-                              'n-county_count',                                    
-                              'n-ac_ind',
-                              'n-heat_ind',
-                              'Small',
-                              'Medium',
-                              'Large'])
-        
-        # Train-test split
-        train, val, test = train_val_test(df)
-        
-        # Split subsets into X and y only for train and val, not doing test just yet
-        X_train, y_train = xy_split(train, 'home_value')
-        X_val, y_val = xy_split(val, 'home_value')
-        
         # Calculate mean and median of y_train
         y_train_mean = y_train.mean()
         y_train_median = y_train.median()
@@ -357,22 +292,20 @@ def model_3():
         poly = PolynomialFeatures()
         X_train = poly.fit_transform(X_train)
         X_val = poly.transform(X_val)
-
-        
     
         # Train a Linear Regression model and evaluate it
         lm = LinearRegression()
         trained_model, train_rmse, val_rmse = train_and_evaluate_model(lm, X_train, y_train, X_val, y_val)
-        
-        # Return the trained model and evaluation metrics
-        return {
-            'model': trained_model,
-            'train_rmse': train_rmse,
-            'val_rmse': val_rmse,
-            'y_train_mean': y_train_mean,
-            'y_train_median': y_train_median,
-            'y_train_stats': bl
-        }
+    
+        # Print the metrics
+        print(f"\n-------------------------------------")
+        print(f"\nTraining RMSE: {train_rmse:.2f}")
+        print(f"\n-------------------------------------")
+        print(f"\nValidation RMSE: {val_rmse:.2f}")
+        print(f"\n-------------------------------------")
+        print(f"\nTraining R-squared (R2): {train_r2:.2f}")
+        print(f"\n-------------------------------------")
+        print(f"\nValidation R-squared (R2): {val_r2:.2f}")
 
 # ======================== final model and visualization ===============================
 def final_model(df, target_column, X_test, y_test, early_stopping_rounds=10, params=None):
