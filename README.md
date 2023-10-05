@@ -40,9 +40,9 @@ My initial hypothesis is that drivers of Tesla's closing stock prices will be tr
 * Explore data in search of drivers of stock closing price
   * Answer the following initial questions
 	* Does TSLA stock volume have a correlation with it's daily closing price? 
-  * Is there a significant relationship between the month in which TSLA stock was traded and its closing price?
-  * Does TSLA daily high stock price have a correlation with open stock price?  
-  * Is there a significant correlation between the month in which TSLA stock was traded and its closing price?
+  	* Is there a significant relationship between the month in which TSLA stock was traded and its closing price?
+ 	 * Does TSLA daily high stock price have a correlation with open stock price?  
+ 	 * Is there a significant correlation between the month in which TSLA stock was traded and its closing price?
 * Develop a Model to predict Tesla stock closing price
   * Use drivers identified in explore to help build predictive models of different types
   * Feature engineer data if able, no preprocess to include all values.
