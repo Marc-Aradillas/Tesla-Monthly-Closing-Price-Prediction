@@ -15,8 +15,7 @@
 
 
 <div align="center">
-  <img src="![art-rachen-sM4r-swmcoY-unsplash](https://github.com/Marc-Aradillas/volatile_company_stock_project/assets/106922826/c9cebfec-8a74-48a5-9509-5a552b83983b)
-" alt="Alt Text" width="500">
+  <img src="(https://github.com/Marc-Aradillas/volatile_company_stock_project/assets/106922826/c9cebfec-8a74-48a5-9509-5a552b83983b)" alt="Alt Text" width="500">
 </div>
 
 
