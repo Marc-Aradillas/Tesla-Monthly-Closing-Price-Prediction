@@ -13,6 +13,9 @@
 
 ----------------------------------
 
+![art-rachen-sM4r-swmcoY-unsplash](https://github.com/Marc-Aradillas/volatile_company_stock_project/assets/106922826/c9cebfec-8a74-48a5-9509-5a552b83983b)
+
+
 # Project Volatile Stock
 
 Predict the monthly closing price for company stocks that are volatile and are not volatile based on 3 years of recorded data.
