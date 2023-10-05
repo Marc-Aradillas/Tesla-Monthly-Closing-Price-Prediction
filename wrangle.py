@@ -1,22 +1,18 @@
 import os
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, PolynomialFeatures
-
-# ----------------------- WRANGLE STOCKS-----------------------
-# wrapping Acquire and Prep functions into one for wrangle.
-
-import pandas as pd
-import numpy as np
-import requests
-import os
-from sklearn.model_selection import train_test_split
 from datetime import datetime, timedelta
+import requests
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 
 import config
 
 api_key = config.ALPHA_VANTAGE_API_KEY
+
+
+# ----------------------- WRANGLE STOCKS-----------------------
+# wrapping Acquire and Prep functions into one for wrangle.
 
 
 def get_stock_data(symbol, api_key):
@@ -186,11 +182,3 @@ def split_and_scale_data(df, seed=42):
     test[numerical_features] = scaler.transform(test[numerical_features])
 
     return train, val, test
-
-
-# ------------------------ XY SPLIT FUNCTION ----------------------
-# xy_split function to create usable subsets; reusable.
-def xy_split(df, col):
-    X = df.drop(columns=[col])
-    y = df[col]
-    return X, y

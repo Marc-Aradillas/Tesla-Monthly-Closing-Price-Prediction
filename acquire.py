@@ -53,9 +53,3 @@ def get_stock_data(symbol, api_key):
     df.to_csv(csv_file_path)
     
     return df
-
-# Get data by calling for NVDA, AAPL, and AMD
-# nvda_data = get_stock_data('NVDA', api_key)
-# aapl_data = get_stock_data('AAPL', api_key)
-# amd_data = get_stock_data('AMD', api_key)
-
