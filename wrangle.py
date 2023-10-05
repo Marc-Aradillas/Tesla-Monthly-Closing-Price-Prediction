@@ -194,24 +194,3 @@ def xy_split(df, col):
     X = df.drop(columns=[col])
     y = df[col]
     return X, y
-
-
-# ------------------------ XY SPLIT TVT FUNCTION ----------------------
-def scale_data(train, val, test, to_scale):
-    # make copies for scaling
-    train_scaled = train.copy()
-    validate_scaled = val.copy()
-    test_scaled = test.copy()
-
-    # scaling tool
-    scaler = StandardScaler()
-
-    #fit train set
-    scaler.fit(train[to_scale])
-
-    # transform the set
-    train_scaled[to_scale] = scaler.transform(train[to_scale])
-    validate_scaled[to_scale] = scaler.transform(val[to_scale])
-    test_scaled[to_scale] = scaler.transform(test[to_scale])
-    
-    return train_scaled, validate_scaled, test_scaled
