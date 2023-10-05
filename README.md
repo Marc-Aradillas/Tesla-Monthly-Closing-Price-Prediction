@@ -124,3 +124,6 @@ My initial hypothesis is that drivers of Tesla's closing stock prices will be tr
       - Utilizing Time series models like:
         - ARIMA (AutoRegressive Integrated Moving Average)
           - or more advanced techniques like LSTM (Long Short-Term Memory) and FBProphet are designed specifically for time-dependent data like stock prices.
+
+
+>  In this individual project, I leveraged data science techniques to create a robust and versatile financial analysis and prediction tool. The primary goal was to develop a comprehensive solution for analyzing historical stock market data, making predictions, and evaluating the performance of different machine learning models.
