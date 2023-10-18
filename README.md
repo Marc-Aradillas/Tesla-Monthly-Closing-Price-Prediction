@@ -24,9 +24,9 @@
 
 ### Project Description
 
-In the world of finance and investment, understanding the behavior of stock prices is paramount. Investors and financial analysts often seek to predict the future prices of company stocks to make informed decisions. This project focuses on predicting the monthly closing prices of company stocks, with a particular emphasis on those that are considered volatile.
+In the dynamic world of finance and investment, understanding stock price behavior is paramount. Investors and financial analysts constantly seek to predict future stock prices to make well-informed decisions. This project focuses on predicting the monthly closing prices of company stocks, with a particular emphasis on those stocks that exhibit higher volatility, as they present unique opportunities and risks.
 
-The project leverages three years of recorded historical stock price data to identify key drivers of monthly closing prices and develop machine learning models to make accurate predictions. The dataset includes essential features such as open price, high price, low price, closing price, and trading volume for the Tesla company stocks. The goal is to create a robust predictive model that can help investors and analysts make more informed decisions in the dynamic world of stock trading.
+Leveraging three years of historical stock price data from the Alpha Vantage API, my goal is to identify the key drivers of monthly closing prices for Tesla company stocks and develop robust machine learning models for accurate predictions. The dataset includes crucial features such as open price, high price, low price, closing price, and trading volume. By creating a reliable predictive model, my project aims to empower investors and analysts to navigate the complex landscape of stock trading with more confidence and precision.
 
 ### Project Goal
 
