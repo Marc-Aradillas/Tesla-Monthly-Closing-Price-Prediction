@@ -19,7 +19,8 @@
   <img src="https://github.com/Marc-Aradillas/volatile_company_stock_project/assets/106922826/891e38d5-28cd-4e1d-b0d7-c43aea0e4035" width="750" alt="Image">
 </p>
 
-Predict the monthly closing price for company stocks that are volatile and are not volatile based on 3 years of recorded data.
+### Predict the monthly closing price for Tesla company stock based on 3 years of recorded data from Alpha Vantage API.  
+##### ***note: Tesla stock is typically volatile, more than three times as volatile as the S&P 500 in recent months.***
 
 ### Project Description
 
@@ -110,7 +111,7 @@ My initial hypothesis is that drivers of Tesla's closing stock prices will be tr
 - Company stocks with low volatility or are considered stable would not benefit from regression modeling.
 - Company stocks with high volatility need to be analyzed over a shorter amount of time versus the span of twenty plus years.
 - It's easier to analyze data when there is ups and downs on the stock you are trying to predict closing price.
-- Tesla's stock is not easy to predict accurately and it goes the same for other volatile stocks explored during this Data Science project.
+- Tesla's stock is not easy to predict accurately and it goes the same for other volatile stocks explored during the exploration phase outside of the data science project.
 
 
 ## Model Improvement
