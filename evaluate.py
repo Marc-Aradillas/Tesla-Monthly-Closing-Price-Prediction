@@ -21,7 +21,7 @@ def plot_residuals(y, yhat):
     """
     residuals = yhat - y
     plt.figure(figsize=(10, 6))
-    plt.scatter(y, residuals, alpha=0.75, color='orange') # should be y because i want to plot actuals
+    plt.scatter(y, residuals, alpha=0.75, color='blue') # should be y because i want to plot actuals
     plt.xlabel("Predicted Values")
     plt.ylabel("Residuals")
     plt.title("Model Residual Plot")
