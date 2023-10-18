@@ -13,7 +13,7 @@
 
 ----------------------------------
 
-# Project Volatile Stock
+# **Project: Tesla Monthly Closing Price Prediction**
 
 
 Predict the monthly closing price for company stocks that are volatile and are not volatile based on 3 years of recorded data.
