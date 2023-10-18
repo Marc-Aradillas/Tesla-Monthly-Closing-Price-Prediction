@@ -15,6 +15,9 @@
 
 # **Project: Tesla Monthly Closing Price Prediction**
 
+<p align="center">
+  <img src="https://github.com/Marc-Aradillas/volatile_company_stock_project/assets/106922826/891e38d5-28cd-4e1d-b0d7-c43aea0e4035" width="750" alt="Image">
+</p>
 
 Predict the monthly closing price for company stocks that are volatile and are not volatile based on 3 years of recorded data.
 
