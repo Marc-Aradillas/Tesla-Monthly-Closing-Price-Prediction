@@ -30,7 +30,7 @@ Leveraging three years of historical stock price data from the Alpha Vantage API
 
 ### Project Goal
 
-1. dentify Drivers of Monthly Closing Prices: The primary objective is to explore the dataset and identify the factors that significantly influence monthly closing prices. Understanding these drivers is essential for building an effective predictive model.
+1. Identify Drivers of Monthly Closing Prices: The primary objective is to explore the dataset and identify the factors that significantly influence monthly closing prices. Understanding these drivers is essential for building an effective predictive model.
 
 2. Develop Machine Learning Models: Utilize the identified drivers to develop machine learning models capable of predicting monthly closing prices accurately. The project will explore multiple regression-based models, including RandomForestRegressor and LinearRegression, to determine the best-performing approach.
 
